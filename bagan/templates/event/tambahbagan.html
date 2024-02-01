@@ -1,0 +1,124 @@
+{% extends 'event/eventbase.html' %} {% load static %}
+
+{% block title %}
+    {{ event.judul_event }} | Tambah Bagan {{ kategori.judul_kategori }}
+{% endblock %}
+
+{% block style %}
+
+{% endblock style %}
+
+{% block content %}
+    {% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' as putra_url %}
+    {% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' as putri_url %}
+    <h1 class="h3 mb-3"><strong>Tambah Bagan</strong> {{ event.judul_event }}/Kata/{{ kategori.judul_kategori }}
+        {% if putra_url in request.path %}
+          (Putra)
+        {% elif putri_url in request.path %}
+          (Putri)
+        {% endif %}
+        {% if internal %}
+          (Internal)
+        {% elif external %}
+          (External)
+        {% endif %}
+        
+    </h1>
+    <hr>
+
+    <div id="rankform" style="display: block;">
+      <div style="justify-content: space-between;">
+        <div style="width: 100%;" name="group1">
+          <form method="post" style="">
+            <div style="display: flex; flex-wrap: wrap;">
+            {% csrf_token %}
+            {% for grup_value in grup_values %}
+            <div class="" style="overflow: hidden; background-color: #e1e1e1;background-color: rgba(225, 225, 225, 0.9); border-radius: 20px 20px 20px 20px; margin-top: 20px; margin-right: 20px;">
+              <div class="col-lg-12" style="margin-bottom: 15px; margin-top: 5px;">
+                <h2 style="{% if forloop.counter in set1 %} color: red;{% elif forloop.counter in set2 %} color: blue; {% endif %}">Grup {{ forloop.counter }}</h2>
+                <div id="row">
+                  <div class="input-group m-3">
+                    <div class="input-group-prepend">
+                      <select id="team{{ forloop.counter }}" name="team{{ forloop.counter }}" placeholder="-" style="border-radius: 10px 0px 0px 10px;" id="selectInput" multiple="multiple" class="select2 dynamic-select">
+                        {% if putra_url in request.path %}
+                          {% if internal %}
+                            {% for atlet_putra_internal in atlet_putra_internal %}
+                              <option value="{{ atlet_putra_internal.id_atlet }}">{{ atlet_putra_internal }}</option>
+                            {% endfor %}
+                          {% elif external %}
+                            {% for atlet_putra_external in atlet_putra_external %}
+                              <option value="{{ atlet_putra_external.id_atlet }}">{{ atlet_putra_external }}</option>
+                            {% endfor %}
+                          {% endif %}
+                          {% elif putri_url in request.path %}
+                            {% if internal %}
+                              {% for atlet_putri_internal in atlet_putri_internal %}
+                                <option value="{{ atlet_putri_internal.id_atlet }}">{{ atlet_putri_internal }}</option>
+                              {% endfor %}
+                            {% elif external %}
+                              {% for atlet_putri_external in atlet_putri_external %}
+                                <option value="{{ atlet_putri_external.id_atlet }}">{{ atlet_putri_external }}</option>
+                              {% endfor %}
+                          {% endif %}
+                        {% endif %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+              <div>
+                <input type="hidden" name="groups" value="{{ grup_value }}">
+                <input type="hidden" name="juri" value="{{ juri_value }}">
+              </div>
+              <button type="submit" class="btn btn-success" name="group1_submit" value="tambahbagan" style="margin-top: 10px">
+                Submit
+              </button>
+            </form>
+        </div>
+      </div>
+    </div>
+
+      <script>
+    jQuery(document).ready(function($) {
+      $('.select2').select2({
+        closeOnSelect: true
+      });
+
+    });
+        function rank() {
+          var rank = document.getElementById("rank");
+          var medali = document.getElementById("medali");
+          var rankform = document.getElementById("rankform");
+          var medaliform = document.getElementById("medaliform");
+
+          if (rank.classList.contains("btn-dark")) {
+            
+          } else {
+            rank.classList.add("btn-dark");
+            medali.classList.remove("btn-dark");
+            rankform.style.display = "block";
+            medaliform.style.display = "none";
+          }
+        }
+
+        function medali() {
+          var rank = document.getElementById("rank");
+          var medali = document.getElementById("medali");
+          var rankform = document.getElementById("rankform");
+          var medaliform = document.getElementById("medaliform");
+
+          if (medali.classList.contains("btn-dark")) {
+
+          } else {
+            rank.classList.remove("btn-dark");
+            medali.classList.add("btn-dark");
+            rankform.style.display = "none";
+            medaliform.style.display = "block";
+          }
+        }
+
+      </script>
+{% endblock %}

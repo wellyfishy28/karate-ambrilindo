@@ -1,0 +1,350 @@
+{% extends 'event/eventbase.html' %} {% load static %}
+
+{% block title %}
+    {{ judul }}
+{% endblock %}
+
+{% block style %}
+#bracket {width: 1500px; height: 1000px; background-color: #e1e1e1;background-color:rgba(225,225,225,0.9);font-size: 12px;}
+.container { display: flex;-webkit-flex-direction:row;flex-direction: row;}
+.team {padding: 0 5px; margin: 3px 0; height: 15px; line-height: 10px; white-space: nowrap; overflow: auto; overflow-x:auto;}
+.round-one .matchup {margin-left: -200px;}
+.round-two .matchup {margin-left: -20px; margin-top: 75px;}
+.round-three .matchup {margin-left: -190px; margin-top: 192px;}
+.round-four .matchup {margin-left: -50px; margin-top: 428px;}
+.round-five .matchup {margin-left: -75px; margin-top: 450px;}
+.round-details {font-family: 'Roboto Condensed', sans-serif; font-size: 13px; color: #2C7399;text-transform: uppercase;text-align: center;height: 40px;}
+.current li {opacity: 1;}
+.current li.team {background-color: #fff;box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);opacity: 1;}
+
+.independent-box {
+    width: 100%; /* Set your desired width */
+    height: 900px; /* Set your desired height */
+    overflow: auto;
+    background-color: gray;
+    box-sizing: border-box; /* Include padding and border in the box's total width and height */
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    body {
+        visibility: hidden;
+    }
+    
+    #bracket {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
+
+{% endblock style %}
+
+{% block content %}
+    <h1>
+        {{ judul }}
+    </h1>
+
+    <div class="modal fade" id="exampleModalCenterInternal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle">
+        <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-body py-0">
+                    <div class="main-content">
+                        <div class="content-text p-4">
+                            <table>
+								<tr>
+									<td>
+										<h3>Tambah Bagan Kumite</h3>
+									</td>
+									<td>
+										<p style="opacity: 0%;">--</p>
+									</td>
+									<td>
+										
+									</td>
+								</tr>
+							</table>
+							
+							<div id="penyisihanform" style="">
+								<form method="post" action="{% url 'cbkumite' event_slug=event.slug %}">						
+								{% csrf_token %}
+									<label for="grup">Kelas Tanding:</label>
+									<select class="form-select" name="nomor_tanding" aria-label="Default select example">
+										<option value="-" selected>-</option>
+                                        {% for kategori in kategoris %}
+                                            <option value="{{ kategori.pk }}">{{ kategori }}</option>
+                                        {% endfor %}
+									</select>
+									<br>
+									<div class="form-group d-flex align-items-center">
+									<input type="hidden" value="internal" name="grup_tanding">
+									<button type="submit" name="form_type" value="tambahbaganform" class="btn btn-dark mr-3 px-5">Submit</button>
+									</div>
+								</form>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="btn btn-success mb-2 dropdown-toggle" href="#" role="button" data-toggle="modal" data-target="#exampleModalCenterInternal" aria-haspopup="true" aria-expanded="false">
+        <i class="align-middle me-2" data-feather="file-plus" style="margin-top: -3px;"></i>Tambah Bagan
+    </a>
+
+    <div class="row">
+		<div class="d-flex order-1 order-xxl-1" style="height: 1000px; overflow: auto;">
+			<div class="card flex-fill">
+				<div class="card-header">
+					<h5 class="card-title mb-0">Bagan <b>Kumite</b></h5>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover my-0">
+						<thead>
+							<tr>
+								<th class="d-none d-xl-table-cell">No</th>
+								<th>Judul</th>
+								<th>Event</th>
+								<th>MISC</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for kumite in bagan_kumites %}
+							<tr>
+								<td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+								<td>
+                                    <a href="{% url 'bagan-kumite-view' slug=event.slug bagan_pk=kumite.pk %}">
+                                        <b>{{ kumite }}</b>
+                                    </a>
+                                </td>
+								<td>-</td>
+								<td>
+									{% comment %}<div style="display: inline-block;">
+										<a href="{% url 'atletedit' slug=event.slug atlet_pk=putra.pk %}">
+											<button class="btn btn-primary btn-sm" style="">
+												<i class="align-middle" data-feather="edit"></i>
+											</button>
+										</a>
+									</div>
+									<div style="display: inline-block;">
+										<form method="POST">
+											{% csrf_token %}
+											<input type="hidden" name="atlet_pk" value="{{ putra.pk }}"></input>
+											<button type="submit" name="submit_button" value="hapusatlet" class="btn btn-danger btn-sm" style=""><i class="align-middle" data-feather="trash-2"></i></button>
+										</form>
+									</div> {% endcomment %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<!--     
+    <a href="{% url 'cbkumite' event_slug=event.slug %}">
+        <button class="btn btn-success">
+            Buat Bagan
+        </button>
+    </a> -->
+
+    <!-- <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row mb-2">
+            <input type="hidden" name="type" value="nama">
+            <div class="col-12 col-md-3 col-xxl-6 d-flex order-1 order-xxl-1">
+                <input type="text" placeholder="Nama bagan..." class="form-control" name="judul" required/>  
+            </div>
+            <div class="col-12 col-md-6 col-xxl-6 d-flex order-2 order-xxl-1">
+                <button type="submit" class="btn btn-success" style="color: white;">Submit</button>
+            </div>
+        </div>
+    </form> -->
+
+    <!-- <div class="independent-box">
+        <section id="bracket" >
+            <div class="container">
+                    <div class="round round-one current">
+                        <div class="round-details">
+                        </div>
+                        {% for bagan in bagans %}
+                            <div>
+
+                                <ul class="matchup">
+                                    <li class="team team-top top" style="text-align: center; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ bagan.atlet1 }}
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ bagan.atlet1.info }}  
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ bagan.atlet1.subinfo }} 
+                                    </li>
+                                </ul>
+                                
+                                <div>
+                                    <ul class="matchup">
+                                        {% if bagan.atlet2 is not none %}
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ bagan.atlet2 }}
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ bagan.atlet2.info }}  
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ bagan.atlet2.subinfo }} 
+                                        </li>
+                                        {% else %}
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 158px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="round round-two current" style="margin-top: -43px;">
+                        <div class="round-details">
+                        </div>
+                        {% for i in round2 %}
+                            <div>
+
+                                <ul class="matchup">
+                                    <li class="team team-top top" style="text-align: center; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                </ul>
+                                
+                                <div >
+                                    <ul class="matchup">
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="round round-three current" style="margin-top: -96px">
+                        <div class="round-details">
+                        </div>
+                            <div>
+                                {% for i in round3 %}
+                                <ul class="matchup">
+                                    <li class="team team-top top" style="text-align: center; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                </ul>
+                                
+                                <div style="">
+                                    <ul class="matchup">
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endfor %}
+                            </div>
+                    </div>
+                    <div class="round round-four current" style="margin-top: -220px;">
+                        <div class="round-details">
+                        </div>
+                            <div>
+
+                                <ul class="matchup">
+                                    {% for i in round4 %}
+                                <ul class="matchup">
+                                    <li class="team team-top top" style="text-align: center; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                    </li>
+                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    </li>
+                                </ul>
+                                
+                                <div style="">
+                                    <ul class="matchup">
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endfor %}
+                                </ul>
+                            </div>
+                    </div>
+
+                    <div class="round round-five current">
+                        <div class="round-details">
+                            </div>
+                                <div>
+
+                                    <ul class="matchup">
+                                        {% for i in round5 %}
+                                    <ul class="matchup">
+                                        <li class="team team-top top" style="text-align: center; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                        </li>
+                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        </li>
+                                    </ul>
+                                    
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                        </div>
+                    </section>
+                </div> -->
+
+    <!-- <button id="printButton" class="btn btn-secondary">Print</button>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="reset">
+        <button type="submit" class="btn btn-danger">Reset</button>
+    </form> -->
+
+    <br>
+    
+    <button id="openWindowButton" class="btn btn-primary">Click Disini Untuk ke Control Panel Kumite</button>
+
+
+    <script>
+        document.getElementById("openWindowButton").addEventListener("click", function() {
+            var url = "{% url 'kumite-cp' slug=event.slug %}";
+            window.open(url)
+        });
+
+        document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+        });
+    </script>
+{% endblock %}

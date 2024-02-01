@@ -1,0 +1,963 @@
+{% extends 'staticbase.html' %}
+
+{% block title %}
+Test
+{% endblock %}
+
+{% block style %}
+#bracket {width: 1500px; height: 1000px; background-color: #e1e1e1;background-color:rgba(225,225,225,0.9);font-size: 12px;}
+.container1 { display: flex;-webkit-flex-direction:row;flex-direction: row;}
+.team {padding: 0 5px; margin: 3px 0; height: 15px; line-height: 10px; white-space: nowrap; overflow: auto; overflow-x:auto;}
+.round-one .matchup {margin-left: -200px;}
+.round-two .matchup {margin-left: -20px; margin-top: 75px;}
+.round-three .matchup {margin-left: -190px; margin-top: 192px;}
+.round-four .matchup {margin-left: -50px; margin-top: 428px;}
+.round-five .matchup {margin-left: -75px; margin-top: 450px;}
+.round-details {font-family: 'Roboto Condensed', sans-serif; font-size: 13px; color: #2C7399;text-transform: uppercase;text-align: center;height: 40px;}
+.current li {opacity: 1;}
+.current li.team {background-color: #fff;box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);opacity: 1;}
+
+.independent-box {
+    width: 100%; /* Set your desired width */
+    height: 600px; /* Set your desired height */
+    overflow: auto;
+    background-color: gray;
+    box-sizing: border-box; /* Include padding and border in the box's total width and height */
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    body {
+        visibility: hidden;
+    }
+    
+    #bracket {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
+
+{% endblock style %}
+
+{% block content %}
+<main id="main" class="main-page">
+
+    <!--==========================
+      Hotels Section
+    ============================-->
+    <section id="hotels" class="wow fadeIn">
+
+        <div class="container">
+            <div class="section-header">
+                <h2>{{ bagan }}</h2>
+            </div>
+
+            <a href="{% url 'detailevent' slug=event.slug jenis='kata' %}">
+                <button class="btn btn-danger" style="margin-top: 10px">
+                    <- Kembali
+                </button>
+            </a>
+
+            <br>
+            <br>
+
+            {% if bagan.new == True and bagan.kategori == 'kata' %}
+            <div class="row">
+                <div class="independent-box">
+                    <section id="bracket" >
+                        <div class="container1" style="margin-left: 200px;">
+                                <div class="round round-one current">
+                                    <div class="round-details">
+                                    </div>
+                                    {% for 1 in round_1 %}
+                                        <div>
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {% if 1.id_score.first.id_totalscore.first.total and 1.id_score.first.id_totalscore.first.number == 1 %}
+                                                            {{ 1.id_score.first.id_totalscore.first.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                            <!-- 00.0 -->
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+                                            
+                                            {% if 1.dinilai != True %}
+                                            <div style="position: relative">
+                                            {% if 1.atlet1 != None and 1.atlet2 != None and admintatami %}
+                                            {% if putra_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk detailbagan_pk=1.pk tatami_pk=admintatami.pk %}">
+                                            {% elif putri_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk detailbagan_pk=1.pk tatami_pk=admintatami.pk %}">
+                                            {% endif %}
+                                                <button class="btn btn-danger" style="font-size: 10px; height: 10px; line-height: 0; margin-top: -18px; position: absolute;">
+                                                    Start
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                             </div>
+                                            {% endif %}
+        
+                                            <div>
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2 }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            {% if 1.id_score.first.id_totalscore.last.total and 1.id_score.first.id_totalscore.last.number == 2 %}
+                                                            {{ 1.id_score.first.id_totalscore.last.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2.perguruan }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2.perwakilan }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+            
+                                <div class="round round-two current" style="margin-top: -43px;">
+                                    <div class="round-details">
+                                    </div>
+                                    {% for 2 in round_2 %}
+                                        <div>
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {% if 2.id_score.first.id_totalscore.first.total and 2.id_score.first.id_totalscore.first.number == 1 %}
+                                                            {{ 2.id_score.first.id_totalscore.first.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                            <!-- 00.0 -->
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                {% if 2.atlet1 == None %}
+                                                -
+                                                {% else %}
+                                                {{ 2.atlet1.perguruan }}
+                                                {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                {% if 2.atlet1 == None %}
+                                                -
+                                                {% else %}
+                                                {{ 2.atlet1.perwakilan }}
+                                                {% endif %}
+                                                </li>
+                                            </ul>
+        
+                                            {% if 2.dinilai != True %}
+                                            <div style="position: relative">
+                                            {% if 2.atlet1 != None and 2.atlet2 != None and admintatami %}
+                                            {% if putra_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk detailbagan_pk=2.pk tatami_pk=admintatami.pk %}">
+                                            {% elif putri_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk detailbagan_pk=2.pk tatami_pk=admintatami.pk %}">
+                                            {% endif %}
+                                                <button class="btn btn-danger" style="font-size: 10px; height: 10px; line-height: 0; margin-top: 10px; margin-left: 100px; position: absolute;">
+                                                    Start
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                             </div>
+                                            {% endif %}
+                                            
+                                            <div >
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 2.atlet2 != None %}
+                                                        {{ 2.atlet2 }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            {% if 2.id_score.first.id_totalscore.last.total and 2.id_score.first.id_totalscore.last.number == 2 %}
+                                                            {{ 2.id_score.first.id_totalscore.last.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet2 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet2.perguruan }}
+                                                    {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet2 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet2.perwakilan }}
+                                                    {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+            
+                                <div class="round round-three current" style="margin-top: -96px">
+                                    <div class="round-details">
+                                    </div>
+                                        <div>
+                                            {% for 3 in round_3 %}
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {% if 3.id_score.first.id_totalscore.first.total and 3.id_score.first.id_totalscore.first.number == 1 %}
+                                                            {{ 3.id_score.first.id_totalscore.first.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                            <!-- 00.0 -->
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+        
+                                            {% if 3.dinilai != True %}
+                                            <div style="position: relative">
+                                            {% if 3.atlet1 != None and 3.atlet2 != None and admintatami %}
+                                            {% if putra_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk detailbagan_pk=3.pk tatami_pk=admintatami.pk %}">
+                                            {% elif putri_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk detailbagan_pk=3.pk tatami_pk=admintatami.pk %}">
+                                            {% endif %}
+                                                <button class="btn btn-danger" style="font-size: 10px; height: 10px; line-height: 0; margin-top: 65px; margin-left: 40px; position: absolute;">
+                                                    Start
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                             </div>
+                                            {% endif %}
+                                            
+                                            <div style="">
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2 }}
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            <span >
+                                                                {% if 3.id_score.first.id_totalscore.last.total and 3.id_score.first.id_totalscore.last.number == 2 %}
+                                                                {{ 3.id_score.first.id_totalscore.last.total }}
+                                                                {% else %}
+                                                                00.0
+                                                                {% endif %}
+                                                                <!-- 00.0 -->
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2.perguruan }}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2.perwakilan }}
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                </div>
+                                <div class="round round-four current" style="margin-top: -220px;">
+                                    <div class="round-details">
+                                    </div>
+                                        <div>
+                                            <ul class="matchup">
+                                            {% for 4 in round_4 %}
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {% if 4.id_score.first.id_totalscore.first.total and 4.id_score.first.id_totalscore.first.number == 1 %}
+                                                            {{ 4.id_score.first.id_totalscore.first.total }}
+                                                            {% else %}
+                                                            00.0
+                                                            {% endif %}
+                                                            <!-- 00.0 -->
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+                                            
+                                            {% if 4.dinilai != True %}
+                                            <div style="position: relative">
+                                            {% if 4.atlet1 != None and 4.atlet2 != None and admintatami %}
+                                            {% if putra_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk detailbagan_pk=4.pk tatami_pk=admintatami.pk %}">
+                                            {% elif putri_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+                                            <a href="{% url 'controlpanel1' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk detailbagan_pk=4.pk tatami_pk=admintatami.pk %}">
+                                            {% endif %}
+                                                <button class="btn btn-danger" style="font-size: 10px; height: 10px; line-height: 0; margin-top: 210px; margin-left: 150px; position: absolute;">
+                                                    Start
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                             </div>
+                                            {% endif %}
+        
+                                            <div style="">
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2 }}
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            <span >
+                                                                {% if 4.id_score.first.id_totalscore.last.total and 4.id_score.first.id_totalscore.last.number == 2 %}
+                                                                {{ 4.id_score.first.id_totalscore.last.total }}
+                                                                {% else %}
+                                                                00.0
+                                                                {% endif %}
+                                                                <!-- 00.0 -->
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2.perguruan }}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2.perwakilan }}
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                </div>
+            
+                                <div class="round round-five current">
+                                    <div class="round-details">
+                                        </div>
+                                            <div>
+                                                <ul class="matchup">
+                                                    <ul class="matchup">
+                                                        <li class="team team-top top" style="text-align: left; width: 320px; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if round_5.id_atlet.first != None %}
+                                                            {{ round_5.id_atlet.first }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                        {% if round_5.id_atlet.first != None %}
+                                                            {{ round_5.id_atlet.first.perguruan }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {% if round_5.id_atlet.first != None %}
+                                                            {{ round_5.id_atlet.first.perwakilan }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                    </div>
+                                </div>
+            
+                        </section>
+                    </section>
+                </div>
+            </div>
+            {% elif bagan.new == True and bagan.kategori == 'kumite' %}
+            <div class="row">
+                <div class="independent-box">
+                    <section id="bracket" >
+                        <div class="container1" style="margin-left: 200px;">
+                                <div class="round round-one current">
+                                    <div class="round-details">
+                                    </div>
+                                    {% for 1 in round_1 %}
+                                        <div>
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {{ 1.score1 }}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 1.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 1.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+        
+                                            <div>
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2 }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            {{ 1.score2 }}
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2.perguruan }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 1.atlet2 != None %}
+                                                        {{ 1.atlet2.perwakilan }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+            
+                                <div class="round round-two current" style="margin-top: -43px;">
+                                    <div class="round-details">
+                                    </div>
+                                    {% for 2 in round_2 %}
+                                        <div>
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {{ 2.score1 }}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                {% if 2.atlet1 == None %}
+                                                -
+                                                {% else %}
+                                                {{ 2.atlet1.perguruan }}
+                                                {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                {% if 2.atlet1 == None %}
+                                                -
+                                                {% else %}
+                                                {{ 2.atlet1.perwakilan }}
+                                                {% endif %}
+                                                </li>
+                                            </ul>
+                                            
+                                            <div >
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 2.atlet2 != None %}
+                                                        {{ 2.atlet2 }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            {{ 2.score2 }}
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet2 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet2.perguruan }}
+                                                    {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 2.atlet2 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 2.atlet2.perwakilan }}
+                                                    {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+            
+                                <div class="round round-three current" style="margin-top: -96px">
+                                    <div class="round-details">
+                                    </div>
+                                        <div>
+                                            {% for 3 in round_3 %}
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {{ 3.score1 }}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 3.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 3.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+                                            
+                                            <div style="">
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2 }}
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            <span >
+                                                                {{ 3.score2 }}
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2.perguruan }}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 3.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 3.atlet2.perwakilan }}
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                </div>
+                                <div class="round round-four current" style="margin-top: -220px;">
+                                    <div class="round-details">
+                                    </div>
+                                        <div>
+                                            <ul class="matchup">
+                                            {% for 4 in round_4 %}
+                                            <ul class="matchup">
+                                                <li class="team team-top top" style="text-align: left; width: 320px; color: red; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1 }}
+                                                    {% endif %}
+                                                    <div style="text-align: right; margin-top: -8px;">
+                                                        <span >
+                                                            {{ 4.score1 }}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1.perguruan }}
+                                                    {% endif %}
+                                                </li>
+                                                <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    {% if 4.atlet1 == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{ 4.atlet1.perwakilan }}
+                                                    {% endif %}
+                                                </li>
+                                            </ul>
+        
+                                            <div style="">
+                                                <ul class="matchup">
+                                                    <li class="team team-top top" style="text-align: left; width: 320px; color: blue; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2 }}
+                                                        {% endif %}
+                                                        <div style="text-align: right; margin-top: -8px;">
+                                                            <span >
+                                                                {{ 4.score2 }}
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2.perguruan }}
+                                                        {% endif %}
+                                                    </li>
+                                                    <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if 4.atlet2 == None %}
+                                                        -
+                                                        {% else %}
+                                                        {{ 4.atlet2.perwakilan }}
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                </div>
+            
+                                <div class="round round-five current">
+                                    <div class="round-details">
+                                        </div>
+                                            <div>
+                                                <ul class="matchup">
+                                                    <ul class="matchup">
+                                                        <li class="team team-top top" style="text-align: left; width: 320px; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if round_5.atlet2 != None %}
+                                                            {{ round_5.atlet2 }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                        <li class="team team-bottom bottom" style="width: 210.7px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> 
+                                                        {% if round_5.atlet2 != None %}
+                                                            {{ round_5.atlet2.perguruan }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                        <li class="team team-bottom bottom" style="width: 105.3px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {% if round_5.atlet2 != None %}
+                                                            {{ round_5.atlet2.perwakilan }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                    </div>
+                                </div>
+            
+                        </section>
+                    </section>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if detailbagans.id_atlet.count >= 2 %}
+
+            <div class="row" style="margin-top: 20px;">
+                <!-- <div class="d-flex"> -->
+                    <div class="card flex-fill">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                Perebutan Juara 1 & 2
+                            </h5>
+                        </div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">Nama</th>
+                                    <th style="text-align: center;">Info</th>
+                                    <th style="text-align: center;">Subinfo</th>
+                                    <th style="text-align: center;">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet in detailmedali1 %}
+                                <tr>
+                                    <td style="text-align: center;">{{ atlet }}</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">
+                                        <span style="color: white; font-size: 20px;" class="badge bg-success">00.0</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                <!-- </div> -->
+
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+                <!-- <div class="d-flex"> -->
+                    <div class="card flex-fill">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                Perebutan Juara 3A
+                            </h5>
+                        </div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">Nama</th>
+                                    <th style="text-align: center;">Info</th>
+                                    <th style="text-align: center;">Subinfo</th>
+                                    <th style="text-align: center;">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet in detailmedali2 %}
+                                <tr>
+                                    <td style="text-align: center;">{{ atlet }}</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">
+                                        <span style="color: white; font-size: 20px;" class="badge bg-success">00.0</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                <!-- </div> -->
+
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+                <!-- <div class="d-flex"> -->
+                    <div class="card flex-fill">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                Perebutan Juara 3B
+                            </h5>
+                        </div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">Nama</th>
+                                    <th style="text-align: center;">Info</th>
+                                    <th style="text-align: center;">Subinfo</th>
+                                    <th style="text-align: center;">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet in detailmedali3 %}
+                                <tr>
+                                    <td style="text-align: center;">{{ atlet }}</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">-</td>
+                                    <td style="text-align: center;">
+                                        <span style="color: white; font-size: 20px;" class="badge bg-success">00.0</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                <!-- </div> -->
+
+            </div>
+            
+            {% elif detailbagans.first.id_atlet.count == 1 %}
+            <div class="row" style="margin-top: 20px;">
+                    <!-- <div class="d-flex"> -->
+                        <div class="card flex-fill">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Grup 1</h5>
+                            </div>
+                            <table class="table table-hover my-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Info</th>
+                                        <th>Subinfo</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><span style="color: white;" class="badge {% if bagan.status == 'S' %}bg-success{% else %}bg-danger{% endif %}">{{ bagan.get_status_display }}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card flex-fill">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Grup 2</h5>
+                            </div>
+                            <table class="table table-hover my-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Info</th>
+                                        <th>Subinfo</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><span style="color: white;" class="badge {% if bagan.status == 'S' %}bg-success{% else %}bg-danger{% endif %}">{{ bagan.get_status_display }}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    <!-- </div> -->
+    
+            </div>
+            {% endif %}
+        </div>
+  
+      </section>
+    </main>
+{% endblock %}

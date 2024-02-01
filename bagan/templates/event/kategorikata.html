@@ -1,0 +1,451 @@
+{% extends 'event/eventbase.html' %} {% load static %}
+
+{% block title %}
+    {{ event.judul_event }} | {{ kategori.judul_kategori }} 
+{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-3"><strong>Dashboard Kata</strong> {{ kategori.judul_kategori }}
+		{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' as putra_url %}
+		{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' as putri_url %} 
+		{% if putra_url in request.path %}
+			(Putra)
+		{% endif %}
+		{% if putri_url in request.path %}
+			(Putri)
+		{% endif %}
+	</h1>
+
+	{% if putra_url in request.path %}
+		<a href="{% url 'keltambahbagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+	{% elif putri_url in request.path %}
+		<a href="{% url 'keltambahbagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+	{% endif %}
+		{% comment %} <div class="dropdown show"> {% endcomment %}
+			<a class="btn btn-success mb-2 dropdown-toggle" href="#" role="button" data-toggle="modal" data-target="#exampleModalCenterInternal" aria-haspopup="true" aria-expanded="false">
+				<i class="align-middle me-2" data-feather="file-plus" style="margin-top: -3px;"></i>Tambah Bagan
+			</a>
+			{% comment %} <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+				<button class="btn btn-secondary mb-2" style="margin-left: 5px; margin-top: 10px" data-toggle="modal" data-target="#exampleModalCenterInternal">
+					<i class="align-middle me-2" style="margin-top: -3px;" data-feather="user-check"></i>
+					Internal
+				</button>
+				<button class="btn btn-secondary mb-2" style="margin-right: 5px; margin-top: 10px" data-toggle="modal" data-target="#exampleModalCenterExternal">
+					<i class="align-middle me-2" style="margin-top: -3px;" data-feather="user-x"></i>
+					External
+				</button>
+			</div> {% endcomment %}
+		{% comment %} </div> {% endcomment %}
+	</a>
+	<div class="mb-2">
+		{% comment %} {% if putra_url in request.path %}
+		<a href="{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+			<button type="button" class="btn {% if request.path == putra_url %}btn-dark {% else %} btn-light btn-outline-dark {% endif %}">
+				Semua
+			</button>
+		</a>
+
+		<a href="{% url 'keldetailkategoriinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+			<button type="button" class="btn {% if request.path == putrainternal_url %}btn-dark{% else %}btn-light btn-outline-dark{% endif %}">
+				Internal
+			</button>
+		</a>
+		
+		<a href="{% url 'keldetailkategoriexternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+			<button type="button" class="btn {% if request.path == putraexternal_url %}btn-dark{% else %}btn-light btn-outline-dark{% endif %}">
+				External
+			</button>
+		</a>
+		{% else %} {% endcomment %}
+		{% comment %} <a href="{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+			<button type="button" class="btn {% if request.path == putri_url %}btn-dark {% else %} btn-light btn-outline-dark {% endif %}">
+				Semua
+			</button>
+		</a> {% endcomment %}
+
+		{% comment %} <a href="{% url 'keldetailkategoriinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+			<button type="button" class="btn {% if request.path == putriinternal_url %}btn-dark{% else %}btn-light btn-outline-dark{% endif %}">
+				Internal
+			</button>
+		</a>
+		
+		<a href="{% url 'keldetailkategoriexternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+			<button type="button" class="btn {% if request.path == putriexternal_url %}btn-dark{% else %}btn-light btn-outline-dark{% endif %}">
+				External
+			</button>
+		</a>
+		{% endif %} {% endcomment %}
+	</div>
+    <div class="row">
+		<div class="d-flex order-1 order-xxl-1">
+			<div class="card flex-fill">
+				<div class="card-header">
+					<h5 class="card-title mb-0">Semua <b>Bagan</b></h5>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover my-0">
+						<thead>
+							<tr>
+								<tr>
+									<th class="d-none d-xl-table-cell">No</th>
+									<th>Judul</th>
+									<th>Event</th>
+									<th>MISC</th>
+								</tr>
+							</tr>
+						</thead>
+						<tbody>
+							{% for bagan in bagan %}
+							<tr>
+
+								<td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+								<td>
+									{% if putra_url in request.path %}
+										<a href="{% url 'keldetailbagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' pk=bagan.pk %}">
+									{% elif putri_url in request.path %}
+										<a href="{% url 'keldetailbagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' pk=bagan.pk %}">
+									{% endif %}
+										<b>{{ bagan.judul_bagan }}</b>
+									</a>
+								</td>
+								<td><span class="badge {% if bagan.status == 'P' %}bg-danger {% else %}bg-success {% endif %}"> {% if bagan.status == 'P' %}Pending {% else %}Selesai {% endif %}</td>
+								<td>
+										
+									<div>
+										{% if putra_url in request.path %} 
+										<a class="btn btn-primary btn-sm" href="{% url 'bagan-edit' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk %}">
+											<i class="align-middle" data-feather="edit" style="color: white"></i>
+										</a>
+										{% elif putri_url in request.path %}
+										<a class="btn btn-primary btn-sm" href="{% url 'bagan-edit' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk %}">
+											<i class="align-middle" data-feather="edit" style="color: white"></i>
+										</a>
+										{% endif %}
+										{% if putra_url in request.path %} 
+										<a href="{% url 'deletebagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' bagan_pk=bagan.pk %}">
+										{% elif putri_url in request.path %}
+										<a href="{% url 'deletebagan' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' bagan_pk=bagan.pk %}">
+										{% endif %}
+										{% csrf_token %}
+										<button class="btn btn-danger btn-sm" style=""><i class="align-middle" data-feather="trash-2"></i></button>
+										</a>
+									</div>
+									
+								</td>
+
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="d-flex order-1 order-xxl-1">
+			<div class="card flex-fill">
+				<div class="card-header">
+					<h5 class="card-title mb-0">Semua Atlet {% if putra_url in request.path %}<b>Putra</b>{% elif putri_url in request.path %}<b>Putri</b>{% endif %}</h5>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover my-0">
+						<thead>
+							<tr>
+								<tr>
+									<th class="d-none d-xl-table-cell">No</th>
+									<th>Nama</th>
+									<th>Perguruan</th>
+									<th>Perwakilan</th>
+									<th>MISC</th>
+								</tr>
+							</tr>
+						</thead>
+						<tbody>
+						{% if putra_url in request.path %}
+							{% for putra in atlet_putra %}
+								<tr>
+									<td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+										<td><b>{{ putra.nama_atlet }}</b></td>
+										<td>{{ putra.perguruan }}</td>
+										<td>{{ putra.perwakilan }}</td>
+										<td>
+											<div >
+												<button class="btn btn-primary btn-sm" style=""><i class="align-middle" data-feather="edit"></i></button>
+												<button class="btn btn-danger btn-sm" style=""><i class="align-middle" data-feather="trash-2"></i></button>
+											</div>
+										</td>
+								</tr>
+							{% endfor %}
+							{% else %}
+							{% for putri in atlet_putri %}
+							<tr>
+								<td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+									<td><b>{{ putri.nama_atlet }}</b></td>
+									<td>{{ putri.perguruan }}</td>
+									<td>{{ putri.perwakilan }}</td>
+									<td>
+										<div >
+											<button class="btn btn-primary btn-sm" style=""><i class="align-middle" data-feather="edit"></i></button>
+											<button class="btn btn-danger btn-sm" style=""><i class="align-middle" data-feather="trash-2"></i></button>
+										</div>
+									</td>
+							</tr>
+							{% endfor %}
+						{% endif %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- INTERNAL -->
+	<div class="modal fade" id="exampleModalCenterInternal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle">
+        <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-body py-0">
+                    <div class="main-content">
+                        <div class="content-text p-4">
+                            <table>
+								<tr>
+									<td>
+										<h3>Tambah Bagan</h3>
+									</td>
+									<td>
+										<p style="opacity: 0%;">--</p>
+									</td>
+									<td>
+										
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<button class="btn btn-secondary" id="penyisihan-button" value="checked" onclick="penyisihanonclick()">Penyisihan</button>
+										<button class="btn bg-transparent btn-outline-secondary" id="medali-button" value="none" onclick="medalionclick()">Medali</button>
+										<button class="btn bg-transparent btn-outline-secondary" id="bendera-button" value="none" onclick="benderaonclick()">Bendera</button>
+										<button class="btn bg-transparent btn-outline-secondary" id="new-button" value="none" onclick="newonclick()">New</button>
+									</td>
+								</tr>
+							</table>
+							
+							<div id="penyisihanform" style="">
+								{% if putra_url in request.path %}
+								<form method="post" action="{% url 'valuebaganinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+								{% else %}
+								<form method="post" action="{% url 'valuebaganinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+								{% endif %}								
+								{% csrf_token %}
+									<div class="form-group">
+										<label for="grup">Banyaknya grup:</label>
+										<input type="number" name="value" class="form-control" id="number" placeholder="Input banyaknya grup">
+									</div>
+									<label for="grup">Penilaian Juri:</label>
+									<select class="form-select" name="juri" aria-label="Default select example">
+										<option value="3" selected>3 Juri</option>
+										<option value="5">5 Juri</option>
+										<option value="7">7 Juri</option>
+									</select>
+									<br>
+									<div class="form-group d-flex align-items-center">
+									<input type="hidden" value="internal" name="grup_tanding">
+									<button type="submit" name="form_type" value="tambahbaganform" class="btn btn-dark mr-3 px-5">Submit</button>
+									</div>
+								</form>
+							</div>
+
+							<div id="medaliform" style="display: none">
+							{% if putra_url in request.path %}
+							<form method="post" action="{% url 'keltambahmedaliinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+							{% else %}
+							<form method="post" action="{% url 'keltambahmedaliinternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+							{% endif %}
+							{% csrf_token %}
+								<label for="grup">Penilaian Juri:</label>
+									<select class="form-select" name="juri" aria-label="Default select example">
+										<option value="3" selected>3 Juri</option>
+										<option value="5">5 Juri</option>
+										<option value="7">7 Juri</option>
+									</select>
+								<br>
+									<button class="btn btn-dark mr-3 px-5" name="tipe" value="medali">
+										Submit
+									</button>
+							</form>
+							</div>
+							
+
+							<div id="benderaform" style="display: none">
+								{% if putra_url in request.path %}
+								<form method="post" action="{% url 'keltambahbenderainternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+								{% else %}
+								<form method="post" action="{% url 'keltambahbenderainternal' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+								{% endif %}
+								{% csrf_token %}
+								<div class="form-group">
+									<label for="grup">Banyaknya matchup:</label>
+									<input type="number" name="value" class="form-control" id="number" placeholder="Input banyaknya matchup">
+								</div>
+									<label for="grup">Penilaian Juri:</label>
+										<select class="form-select" name="juri" aria-label="Default select example">
+											<option value="3" selected>3 Juri</option>
+											<option value="5">5 Juri</option>
+											<option value="7">7 Juri</option>
+										</select>
+									<br>
+										<button class="btn btn-dark mr-3 px-5" name="tipe" value="bendera">
+											Submit
+										</button>
+								</form>
+								</div>
+
+								<div id="newform" style="display: none">
+									{% if putra_url in request.path %}
+									<form method="post" action="{% url 'keltambahbagannew' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+									{% else %}
+									<form method="post" action="{% url 'keltambahbagannew' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+									{% endif %}
+									{% csrf_token %}
+										<label for="grup">Penilaian Juri:</label>
+											<select class="form-select" name="juri" aria-label="Default select example">
+												<option value="3" selected>3 Juri</option>
+												<option value="5">5 Juri</option>
+												<option value="7">7 Juri</option>
+											</select>
+										<br>
+											<button class="btn btn-dark mr-3 px-5" name="tipe" value="new">
+												Submit
+											</button>
+									</form>
+								</div>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<!-- EXTERNAL -->
+	<div class="modal fade" id="exampleModalCenterExternal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle">
+        <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-body py-0">
+    
+                
+                    <div class="d-flex main-content">
+                        <div class="content-text p-4">
+                            <h3>Tambah Atlet</h3>
+                            {% comment %} <p>All their equipment and instruments are alive. The sky was cloudless and of a deep dark blue.</p> {% endcomment %}
+            
+                            <form action="#">
+                                <div class="form-group">
+                                    <label for="name">Nama</label>
+                                    <input type="text" class="form-control" id="text" placeholder="Nama...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="perguruan">Perguruan</label>
+                                    <input type="text" class="form-control" id="text" placeholder="Perguruan...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tempat">Tempat Lahir</label>
+                                    <input type="text" class="form-control" id="text" placeholder="Tempat Lahir...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tanggal">Tanggal Lahir</label>
+                                    <input type="date" class="form-control" id="text" placeholder="Tanggal Lahir...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="beratbadan">Berat Badan</label>
+                                    <input type="number" class="form-control" id="text" placeholder="Berat Badan...">
+                                </div>
+
+                                <div class="form-group d-flex align-items-center">
+                                <input type="submit" value="Tambah" class="btn btn-primary mr-3 px-5">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<script>
+		var penyisihan = document.getElementById("penyisihan-button")
+		var medali = document.getElementById("medali-button")
+		var bendera = document.getElementById("bendera-button")
+		var new1 = document.getElementById("new-button")
+		var penyisihanForm = document.getElementById("penyisihanform")
+		var medaliForm = document.getElementById("medaliform")
+		var benderaForm = document.getElementById("benderaform")
+		var newForm = document.getElementById("newform")
+		var current = "penyisihan"
+
+		function penyisihanonclick() {
+			penyisihan.classList = "btn btn-secondary"
+			medali.classList = "btn bg-transparent btn-outline-secondary"
+			bendera.classList = "btn bg-transparent btn-outline-secondary"
+			new1.classList = "btn bg-transparent btn-outline-secondary"
+			penyisihan.value = "checked"
+			medali.value = "none"
+			bendera.value = "none"
+			new1.value = "none"
+			current = "penyisihan"
+			penyisihanform.style = ""
+			medaliform.style = "display: none"
+			benderaForm.style = "display: none"
+			newForm.style = "display: none"
+		}
+
+		function medalionclick() {
+			penyisihan.classList = "btn bg-transparent btn-outline-secondary"
+			medali.classList = "btn btn-secondary"
+			bendera.classList = "btn bg-transparent btn-outline-secondary"
+			new1.classList = "btn bg-transparent btn-outline-secondary"
+			penyisihan.value = "none"
+			medali.value = "checked"
+			bendera.value = "none"
+			new1.value = "none"
+			current = "medali"
+			penyisihanform.style = "display: none"
+			medaliform.style = ""
+			benderaForm.style = "display: none"
+			newForm.style = "display: none"
+		}
+
+		function benderaonclick() {
+			penyisihan.classList = "btn bg-transparent btn-outline-secondary"
+			medali.classList = "btn bg-transparent btn-outline-secondary"
+			bendera.classList = "btn btn-secondary"
+			new1.classList = "btn bg-transparent btn-outline-secondary"
+			penyisihan.value = "none"
+			medali.value = "none"
+			bendera.value = "checked"
+			new1.value = "none"
+			current = "bendera"
+			penyisihanform.style = "display: none"
+			medaliform.style = "display: none"
+			benderaForm.style = ""
+			newForm.style = "display: none"
+		}
+
+		function newonclick() {
+			penyisihan.classList = "btn bg-transparent btn-outline-secondary"
+			medali.classList = "btn bg-transparent btn-outline-secondary"
+			bendera.classList = "btn bg-transparent btn-outline-secondary"
+			new1.classList = "btn btn-secondary"
+			penyisihan.value = "none"
+			medali.value = "none"
+			bendera.value = "none"
+			new1.value = "checked"
+			current = "new"
+			penyisihanform.style = "display: none"
+			medaliform.style = "display: none"
+			benderaForm.style = "display: none"
+			newForm.style = ""
+		}
+
+		
+
+	</script>
+{% endblock %}

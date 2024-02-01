@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        * {
+            font-size: 10px;
+        }
+        @media print {
+            @page {
+                size: landscape;
+            }
+            .print-button {
+                display: none; /* Hide the buttons in print mode */
+            }
+        }
+        .print-page {
+            page-break-after: always; /* Insert a page break after each div */
+            /* Define page-specific styles, such as dimensions and margins */
+        }
+    </style>
+
+    <title>Copyright. Ambrilindo</title>
+    
+  </head>
+  <body>
+    {% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' as putra_url %}
+    {% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' as putri_url %}
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if bagan.tipe %}
+
+    <b>
+
+    <div style="margin-left: 10px; margin-top: 10px;">
+        {% for group, datas_in_the_current_group in grouped_data.items %}
+		<div class="d-flex order-1 order-xxl-1" style="height: 400px; overflow-y: auto;">
+			<div class="card flex-fill print-page">
+				<div class="card-header">
+					<h5 class="card-title mb-0"> Grup <b>{{ group }}</b></h5>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover my-0">
+						<thead>
+							<tr>
+								<th class="d-none d-xl-table-cell">No</th>
+								<th>Nama</th>
+								<th>Perguruan</th>
+								<th>Perwakilan</th>
+								<th>J1</th>
+                                <th>J2</th>
+                                <th>J3</th>
+                                <th>J4</th>
+                                <th>J5</th>
+								<th>Total Nilai</th>
+							</tr>
+						</thead>
+						<tbody>
+                            {% for detailbagan in datas_in_the_current_group %}
+							<tr>
+								<td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+								<td>
+                                    {% if group in set1 %}
+                                    <b style="color: red;">{{ detailbagan.id_atlet.first }}</b>
+                                    {% elif group in set2 %}
+                                    <b style="color: blue;">{{ detailbagan.id_atlet.first }}</b>
+                                    {% endif %}
+                                </td>
+								<td>{{ detailbagan.id_atlet.first.perguruan }}</td>
+								<td>{{ detailbagan.id_atlet.first.perwakilan }}</td>
+                                
+                                {% if not detailbagan.id_score.first %}
+                                <td>
+                                    -
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                                <td>
+                                    -
+                                </td>
+                                <td>
+                                    -
+                                </td>
+
+                                {% else %}
+                                    {% for scores in detailbagan.id_score.first.juri_score.all %}
+                                        {% if scores.tertinggi %}
+                                            <td>
+                                                <span class="badge bg-success" style="color: white;">{{ scores.jury_score }}</span>
+                                            </td>
+                                        {% elif scores.terendah %}
+                                            <td>
+                                                <span class="badge bg-warning" style="color: white;">{{ scores.jury_score }}</span>
+                                            </td>
+                                        {% else %}
+                                            <td>
+                                                <span>{{ scores.jury_score }}</span>
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <td>
+                                    <b style="font-size: 15px;">
+                                {% if detailbagan.id_score.first.id_totalscore.first.total %}
+                                    <span style="color: white;" class="badge bg-dark">{{ detailbagan.id_score.first.id_totalscore.first.total }}</td>
+                                {% else %}
+                                    <span class="badge bg-dark" style="color: white">00.0
+                                {% endif %}
+                                </td>
+							</tr>
+                            {% endfor %}
+						</tbody> 
+					</table>
+				</div>
+			</div>
+		</div>
+        {% endfor %}
+    </div>
+
+    </b>
+    
+    
+    {% else %}
+
+    <b>
+
+        <div style="margin-left: 10px; margin-top: 10px;">
+            <div class="d-flex order-1 order-xxl-1" style="height: 143px; overflow-y: auto; margin-top: 20px;">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><b>PEREBUTAN JUARA 1</b></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">No</th>
+                                    <th>Nama</th>
+                                    <th>Perguruan</th>
+                                    <th>Perwakilan</th>
+                                    <th>J1</th>
+                                    <th>J2</th>
+                                    <th>J3</th>
+                                    <th>J4</th>
+                                    <th>J5</th>
+                                    <th>Total Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet1 in atlet_perebutan1 %}
+                                <tr>
+                                    <td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if atlet1.number == 1 %}
+                                        <b style="color: red;">
+                                        {% elif atlet1.number == 2 %}
+                                        <b style="color: blue;">
+                                        {% endif %}
+                                        {{ atlet1 }}</b>
+                                    </td>
+                                    <td>{{ atlet1.id_atlet.perguruan }}</td>
+                                    <td>{{ atlet1.id_atlet.perwakilan }}</td>
+                                    
+                                    
+                                    {% if perebutan1.id_score.first.juri_score.all.count == 10 %}
+                                        {% if atlet1.number == 1 %}
+                                            {% for score_detail in atlet1aka_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% elif atlet1.number == 2 %}
+                                            {% for score_detail in atlet1ao_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% else %}
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <b style="font-size: 15px;">
+                                    {% if detailbagan.id_score.first.id_totalscore.first.total %}
+                                        <span style="color: white;" class="badge bg-dark">{{ detailbagan.id_score.first.id_totalscore.first.total }}</td>
+                                    {% else %}
+                                        <span class="badge bg-dark" style="color: white">00.0
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody> 
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex order-1 order-xxl-1" style="height: 143px; overflow-y: auto; margin-top: 20px;">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><b>PEREBUTAN JUARA 2</b></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">No</th>
+                                    <th>Nama</th>
+                                    <th>Perguruan</th>
+                                    <th>Perwakilan</th>
+                                    <th>J1</th>
+                                    <th>J2</th>
+                                    <th>J3</th>
+                                    <th>J4</th>
+                                    <th>J5</th>
+                                    <th>Total Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet2 in atlet_perebutan2 %}
+                                <tr>
+                                    <td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if atlet2.number == 1 %}
+                                        <b style="color: red;">
+                                        {% elif atlet2.number == 2 %}
+                                        <b style="color: blue;">
+                                        {% endif %}
+                                        {{ atlet2 }}</b>
+                                    </td>
+                                    <td>{{ atlet2.id_atlet.perguruan }}</td>
+                                    <td>{{ atlet2.id_atlet.perwakilan }}</td>
+                                    
+                                    
+                                    {% if perebutan2.id_score.first.juri_score.all.count == 10 %}
+                                        {% if atlet2.number == 1 %}
+                                            {% for score_detail in atlet1aka_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% elif atlet2.number == 2 %}
+                                            {% for score_detail in atlet1ao_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% else %}
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <b style="font-size: 15px;">
+                                    {% if detailbagan.id_score.first.id_totalscore.first.total %}
+                                        <span style="color: white;" class="badge bg-dark">{{ detailbagan.id_score.first.id_totalscore.first.total }}</td>
+                                    {% else %}
+                                        <span class="badge bg-dark" style="color: white">00.0
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody> 
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex order-1 order-xxl-1" style="height: 143px; overflow-y: auto; margin-top: 20px;">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><b>PEREBUTAN JUARA 3A</b></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">No</th>
+                                    <th>Nama</th>
+                                    <th>Perguruan</th>
+                                    <th>Perwakilan</th>
+                                    <th>J1</th>
+                                    <th>J2</th>
+                                    <th>J3</th>
+                                    <th>J4</th>
+                                    <th>J5</th>
+                                    <th>Total Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet3 in atlet_perebutan3 %}
+                                <tr>
+                                    <td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if atlet3.number == 1 %}
+                                        <b style="color: red;">
+                                        {% elif atlet3.number == 2 %}
+                                        <b style="color: blue;">
+                                        {% endif %}
+                                        {{ atlet3 }}</b>
+                                    </td>
+                                    <td>{{ atlet3.id_atlet.perguruan }}</td>
+                                    <td>{{ atlet3.id_atlet.perwakilan }}</td>
+                                    
+                                    
+                                    {% if perebutan3.id_score.first.juri_score.all.count == 10 %}
+                                        {% if atlet3.number == 1 %}
+                                            {% for score_detail in atlet1aka_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% elif atlet3.number == 2 %}
+                                            {% for score_detail in atlet1ao_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% else %}
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <b style="font-size: 15px;">
+                                    {% if detailbagan.id_score.first.id_totalscore.first.total %}
+                                        <span style="color: white;" class="badge bg-dark">{{ detailbagan.id_score.first.id_totalscore.first.total }}</td>
+                                    {% else %}
+                                        <span class="badge bg-dark" style="color: white">00.0
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody> 
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex order-1 order-xxl-1" style="height: 143px; overflow-y: auto; margin-top: 20px;">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><b>PEREBUTAN JUARA 3B</b></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">No</th>
+                                    <th>Nama</th>
+                                    <th>Perguruan</th>
+                                    <th>Perwakilan</th>
+                                    <th>J1</th>
+                                    <th>J2</th>
+                                    <th>J3</th>
+                                    <th>J4</th>
+                                    <th>J5</th>
+                                    <th>Total Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atlet4 in atlet_perebutan4 %}
+                                <tr>
+                                    <td class="d-none d-xl-table-cell">{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if atlet4.number == 1 %}
+                                        <b style="color: red;">
+                                        {% elif atlet4.number == 2 %}
+                                        <b style="color: blue;">
+                                        {% endif %}
+                                        {{ atlet4 }}</b>
+                                    </td>
+                                    <td>{{ atlet4.id_atlet.perguruan }}</td>
+                                    <td>{{ atlet4.id_atlet.perwakilan }}</td>
+                                    
+                                    
+                                    {% if perebutan3.id_score.first.juri_score.all.count == 10 %}
+                                        {% if atlet4.number == 1 %}
+                                            {% for score_detail in atlet1aka_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% elif atlet4.number == 2 %}
+                                            {% for score_detail in atlet1ao_detail_score %}
+                                                <td>
+                                                    {{ score_detail.jury_score }}
+                                                </td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% else %}
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                        <td>
+                                            -
+                                        </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <b style="font-size: 15px;">
+                                    {% if detailbagan.id_score.first.id_totalscore.first.total %}
+                                        <span style="color: white;" class="badge bg-dark">{{ detailbagan.id_score.first.id_totalscore.first.total }}</td>
+                                    {% else %}
+                                        <span class="badge bg-dark" style="color: white">00.0
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody> 
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    
+        </b>
+
+
+    
+    {% endif %}
+        {% if putra_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+        <a href="{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putra' %}">
+          <button class="btn btn-danger print-button" style="margin-top: 10px">
+            <i class="align-middle me-2" data-feather="arrow-left"></i>Kembali
+          </button>
+        </a>
+        {% elif putri_url in request.path and kategori.judul_kategori == kategori.judul_kategori %}
+        <a href="{% url 'keldetailkategori' event_slug=event.slug kategori_slug=kategori.slug jenis_kelamin='putri' %}">
+          <button class="btn btn-danger print-button" style="margin-top: 10px">
+            <i class="align-middle me-2" data-feather="arrow-left"></i>Kembali
+          </button>
+        </a>
+        {% endif %}
+        <button class="btn btn-success print-button" onclick="printPage()">Print Page</button>
+
+
+        <!-- <script>
+            function openNewTab1(detail_bagan_pk) {
+                var button = event.target;
+                var url = button.getAttribute('data-url');
+                url = url.replace('detailbagan_pk', detail_bagan_pk);
+                window.open(url, "_blank");
+            }
+        </script> -->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script>
+            function printPage() {
+                // Add the CSS rule for landscape orientation
+                var style = document.createElement('style');
+                style.innerHTML = '@media print { @page { size: landscape; } }';
+                document.head.appendChild(style);
+            
+                // Trigger the print dialog
+                window.print();
+            }
+        </script>
+</body>
+</html>
+    
+            
