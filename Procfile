@@ -1,0 +1,1 @@
+web: gunicorn karate.wsgi --log-file -
